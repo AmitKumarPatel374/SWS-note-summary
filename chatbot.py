@@ -1,27 +1,15 @@
-# -------------------- IMPORTS --------------------
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
+from google import genai
 
-# -------------------- LOAD ENV --------------------
+# Load env
 load_dotenv()
-
 API_KEY = os.getenv("GOOGLE_API_KEY")
 
-if not API_KEY:
-    print("❌ API Key not found")
-else:
-    print("✅ API Key loaded successfully")
+client = genai.Client(api_key=API_KEY)
 
-# -------------------- CONFIGURE GEMINI --------------------
-genai.configure(api_key=API_KEY)
-
-# -------------------- FUNCTION --------------------
 def summarize_notes(notes):
     try:
-        # Initialize model
-        model = genai.GenerativeModel("gemini-1.5-flash-latest")
-
         prompt = f"""
 Summarize these study notes in exactly this format:
 
@@ -44,7 +32,10 @@ Notes to summarize:
 {notes}
 """
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+        )
 
         return response.text
 
